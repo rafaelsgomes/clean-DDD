@@ -1,22 +1,22 @@
 import { AnswerQuestionUseCase } from './answerQuestion'
-import { IAnswersRepository } from '../repositories/IAnswersRepository'
-import { Answer } from '@/domain/forum/enterprise/entities/answer'
-import { expect } from 'vitest'
+import { InMemoryAnswersRepository } from 'test/repositories/inMemoryAnswersRepository'
 
-const fakeAnswersRepository: IAnswersRepository = {
-  create: async (answer: Answer) => {
-    console.log(answer)
-  },
-}
+let repository: InMemoryAnswersRepository
+let sut: AnswerQuestionUseCase
 
-test('create an answer', async () => {
-  const answerQuestion = new AnswerQuestionUseCase(fakeAnswersRepository)
-
-  const answer = await answerQuestion.execute({
-    instructorId: '1',
-    questionId: '1',
-    content: 'New answer',
+describe('Create Answer', async () => {
+  beforeEach(() => {
+    repository = new InMemoryAnswersRepository()
+    sut = new AnswerQuestionUseCase(repository)
   })
 
-  expect(answer.content).toEqual('New answer')
+  it('should be able to create an answer', async () => {
+    const { answer } = await sut.execute({
+      instructorId: '1',
+      questionId: '1',
+      content: 'New answer content',
+    })
+
+    expect(answer.id).toBeTruthy()
+  })
 })

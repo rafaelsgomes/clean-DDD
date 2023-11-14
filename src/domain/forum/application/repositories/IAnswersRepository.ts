@@ -1,4 +1,4 @@
-import { Answer } from '@/domain/forum/enterprise/entities/answer'
+import { Answer } from '../../enterprise/entities/answer'
 
 export interface IAnswersRepository {
   create(answer: Answer): Promise<void>
