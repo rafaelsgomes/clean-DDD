@@ -1,3 +1,4 @@
+import { PaginationParams } from '@/core/repositories/paginationParams'
 import { IAnswersRepository } from '@/domain/forum/application/repositories/IAnswersRepository'
 import { Answer } from '@/domain/forum/enterprise/entities/answer'
 
@@ -21,6 +22,18 @@ export class InMemoryAnswersRepository implements IAnswersRepository {
     }
 
     return answer
+  }
+
+  async findyManyByQuestionId(
+    questionid: string,
+    { page }: PaginationParams,
+  ): Promise<Answer[]> {
+    const answers = this.items
+      .filter((item) => item.questionId.toString() === questionid)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice((page - 1) * 20, page * 20)
+
+    return answers
   }
 
   async delete(answer: Answer): Promise<void> {
