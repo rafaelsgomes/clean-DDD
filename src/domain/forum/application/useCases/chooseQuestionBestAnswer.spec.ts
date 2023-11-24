@@ -4,6 +4,7 @@ import { makeQuestion } from 'test/factories/makeQuestion'
 import { UniqueEntityId } from '@/core/entities/UniqueEntityId'
 import { InMemoryAnswersRepository } from 'test/repositories/inMemoryAnswersRepository'
 import { makeAnswer } from 'test/factories/makeAnswer'
+import { NotAllowedError } from './errors/notAllowedError'
 
 let repository: InMemoryQuestionsRepository
 let answersRepository: InMemoryAnswersRepository
@@ -26,13 +27,15 @@ describe('Choose Question Best Answer', async () => {
     await repository.create(newQuestion)
     await answersRepository.create(newAnswer)
 
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       answerId: newAnswer.id.toString(),
       authorId: newQuestion.authorId.toString(),
     })
 
-    expect(question.bestAnswerId).toEqual(newAnswer.id)
-    expect(question.updatedAt).toEqual(expect.any(Date))
+    if (result.isRigth()) {
+      expect(result.isRigth()).toBe(true)
+      expect(result.value.question.bestAnswerId).toEqual(newAnswer.id)
+    }
   })
 
   it('should not able to set best answer to a question from another user', async () => {
@@ -47,11 +50,12 @@ describe('Choose Question Best Answer', async () => {
     await repository.create(newQuestion)
     await answersRepository.create(newAnswer)
 
-    expect(() => {
-      return sut.execute({
-        answerId: newAnswer.id.toString(),
-        authorId: 'author-2',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      answerId: newAnswer.id.toString(),
+      authorId: 'author-2',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

@@ -2,6 +2,7 @@ import { InMemoryQuestionCommentsRepository } from 'test/repositories/inMemoryQu
 import { DeleteQuestionCommentUseCase } from './deleteQuestionComment'
 import { makeQuestionComment } from 'test/factories/makeQuestionComment'
 import { UniqueEntityId } from '@/core/entities/UniqueEntityId'
+import { NotAllowedError } from './errors/notAllowedError'
 
 let repository: InMemoryQuestionCommentsRepository
 let sut: DeleteQuestionCommentUseCase
@@ -32,11 +33,12 @@ describe('Delete Question Comment', async () => {
 
     await repository.create(comment)
 
-    expect(() => {
-      return sut.execute({
-        authorId: 'author-2',
-        questionCommentId: comment.id.toString(),
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      authorId: 'author-2',
+      questionCommentId: comment.id.toString(),
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

@@ -41,13 +41,13 @@ describe('Fetch Question QuestionComments', async () => {
     await repository.create(newQuestionComments[1])
     await repository.create(newQuestionComments[2])
 
-    const { questionComments } = await sut.execute({
+    const result = await sut.execute({
       page: 1,
       questionId: 'question-1',
     })
 
-    expect(questionComments).toHaveLength(3)
-    expect(questionComments).toEqual([
+    expect(result.value?.questionComments).toHaveLength(3)
+    expect(result.value?.questionComments).toEqual([
       expect.objectContaining({ createdAt: new Date(2022, 0, 23) }),
       expect.objectContaining({ createdAt: new Date(2022, 0, 20) }),
       expect.objectContaining({ createdAt: new Date(2022, 0, 18) }),
@@ -61,11 +61,11 @@ describe('Fetch Question QuestionComments', async () => {
       )
     }
 
-    const { questionComments } = await sut.execute({
+    const reult = await sut.execute({
       page: 2,
       questionId: 'question-1',
     })
 
-    expect(questionComments).toHaveLength(2)
+    expect(reult.value?.questionComments).toHaveLength(2)
   })
 })

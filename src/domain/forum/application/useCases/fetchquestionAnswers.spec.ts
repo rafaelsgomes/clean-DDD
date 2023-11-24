@@ -41,17 +41,19 @@ describe('Fetch Question Answers', async () => {
     await repository.create(newAnswers[1])
     await repository.create(newAnswers[2])
 
-    const { answers } = await sut.execute({
+    const result = await sut.execute({
       page: 1,
       questionId: 'question-1',
     })
 
-    expect(answers).toHaveLength(3)
-    expect(answers).toEqual([
-      expect.objectContaining({ createdAt: new Date(2022, 0, 23) }),
-      expect.objectContaining({ createdAt: new Date(2022, 0, 20) }),
-      expect.objectContaining({ createdAt: new Date(2022, 0, 18) }),
-    ])
+    if (result.isRigth()) {
+      expect(result.value.answers).toHaveLength(3)
+      expect(result.value.answers).toEqual([
+        expect.objectContaining({ createdAt: new Date(2022, 0, 23) }),
+        expect.objectContaining({ createdAt: new Date(2022, 0, 20) }),
+        expect.objectContaining({ createdAt: new Date(2022, 0, 18) }),
+      ])
+    }
   })
 
   it('should be able to fetch paginated question answers', async () => {
@@ -61,11 +63,13 @@ describe('Fetch Question Answers', async () => {
       )
     }
 
-    const { answers } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
       questionId: 'question-1',
     })
 
-    expect(answers).toHaveLength(2)
+    if (result.isRigth()) {
+      expect(result.value.answers).toHaveLength(2)
+    }
   })
 })

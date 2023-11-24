@@ -2,6 +2,7 @@ import { EditQuestionUseCase } from './editQuestion'
 import { InMemoryQuestionsRepository } from 'test/repositories/inMemoryQuestionsRepository'
 import { makeQuestion } from 'test/factories/makeQuestion'
 import { UniqueEntityId } from '@/core/entities/UniqueEntityId'
+import { NotAllowedError } from './errors/notAllowedError'
 
 let repository: InMemoryQuestionsRepository
 let sut: EditQuestionUseCase
@@ -22,18 +23,20 @@ describe('Edit Question', async () => {
 
     await repository.create(newQuestion)
 
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       questionId: 'question-1',
       authorId: 'author-1',
       title: 'Test Question',
       content: 'Test Content',
     })
 
-    expect(question).toMatchObject({
-      title: 'Test Question',
-      content: 'Test Content',
-    })
-    expect(question.updatedAt).toEqual(expect.any(Date))
+    if (result.isRigth()) {
+      expect(result.value.question).toMatchObject({
+        title: 'Test Question',
+        content: 'Test Content',
+      })
+      expect(result.value.question.updatedAt).toEqual(expect.any(Date))
+    }
   })
 
   it('should not be able to edit a question from another user', async () => {
@@ -46,13 +49,14 @@ describe('Edit Question', async () => {
 
     await repository.create(newQuestion)
 
-    expect(() => {
-      return sut.execute({
-        questionId: 'question-1',
-        authorId: 'author-2',
-        title: 'Test Question',
-        content: 'Test Content',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      questionId: 'question-1',
+      authorId: 'author-2',
+      title: 'Test Question',
+      content: 'Test Content',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })
