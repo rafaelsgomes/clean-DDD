@@ -5,15 +5,27 @@ import { UniqueEntityId } from '@/core/entities/UniqueEntityId'
 import { InMemoryAnswersRepository } from 'test/repositories/inMemoryAnswersRepository'
 import { makeAnswer } from 'test/factories/makeAnswer'
 import { NotAllowedError } from './errors/notAllowedError'
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/inMemoryQuestionAttachmentRepository'
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/inMemoryAnswerAttachmentRepository'
 
 let repository: InMemoryQuestionsRepository
 let answersRepository: InMemoryAnswersRepository
+let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
 let sut: ChooseQuestionBestAnswerUseCase
 
 describe('Choose Question Best Answer', async () => {
   beforeEach(() => {
-    repository = new InMemoryQuestionsRepository()
-    answersRepository = new InMemoryAnswersRepository()
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository()
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository()
+    repository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository,
+    )
+    answersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository,
+    )
     sut = new ChooseQuestionBestAnswerUseCase(repository, answersRepository)
   })
 
