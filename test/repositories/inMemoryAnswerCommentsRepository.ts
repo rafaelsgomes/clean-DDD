@@ -1,6 +1,7 @@
 import { IAnswerCommentsRepository } from '@/domain/forum/application/repositories/IAnswerCommentsRepository'
 import { AnswerComment } from '../../src/domain/forum/enterprise/entities/answerComment'
 import { PaginationParams } from '@/core/repositories/paginationParams'
+import { DomainEvents } from '@/core/events/domainEvents'
 
 export class InMemoryAnswerCommentsRepository
   implements IAnswerCommentsRepository
@@ -9,6 +10,8 @@ export class InMemoryAnswerCommentsRepository
 
   async create(answerComment: AnswerComment): Promise<void> {
     this.items.push(answerComment)
+
+    DomainEvents.dispatchEventsForAggregate(answerComment.id)
   }
 
   async findById(id: string): Promise<AnswerComment | null> {

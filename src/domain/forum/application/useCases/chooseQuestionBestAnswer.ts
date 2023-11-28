@@ -2,8 +2,8 @@ import { Either, left, right } from '@/core/either'
 import { Question } from '../../enterprise/entities/question'
 import { IAnswersRepository } from '../repositories/IAnswersRepository'
 import { IQuestionsRepository } from '../repositories/IQuestionsRepository'
-import { ResourceNotFoundError } from './errors/resourceNotFoundError'
-import { NotAllowedError } from './errors/notAllowedError'
+import { ResourceNotFoundError } from '@/core/errors/errors/resourceNotFoundError'
+import { NotAllowedError } from '@/core/errors/errors/notAllowedError'
 
 interface ChooseQuestionBestAnswerUseCaseRequest {
   answerId: string
