@@ -14,8 +14,6 @@ import { makeQuestionComment } from 'test/factories/makeQuestionComment'
 import { InMemoryQuestionCommentsRepository } from 'test/repositories/inMemoryQuestionCommentsRepository'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
-let inMemoryQuestionsRepository: InMemoryQuestionsRepository
-let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
 let repository: InMemoryNotificationsRepository
@@ -55,10 +53,6 @@ describe('On Question Comment Created', () => {
   })
   it('Should send a notification when an question comment is created', async () => {
     const question = makeQuestion()
-
-    const question = makeQuestion({
-      questionId: question.id,
-    })
 
     const questionComment = makeQuestionComment({
       questionId: question.id,
